@@ -1,0 +1,14 @@
+spring:
+  profiles:
+    active: "dev"
+    
+  application:
+    name: equity-bot-property-svc
+        
+security:
+  basic:
+    enabled: false
+    
+management:
+  security:
+  enabled: false   
