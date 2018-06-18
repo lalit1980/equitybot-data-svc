@@ -10,29 +10,29 @@
 
 spring:
   kafka:
-    bootstrap-servers: localhost:9092,localhost:9093,localhost:9094
+    bootstrap-servers: ${KAFKASERVERS}
     consumer:
-      zerodha-order-consume-topic: zerodha-tickdataservice-publish
-      groupid: zerodha-tick-group-id
+      zerodha-order-consume-topic: ${ORDERTICKDATAPUBLISH}
+      groupid: ${TICKGROUPID}
       auto-offset-reset: earliest
       key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
       value-deserializer: org.apache.kafka.common.serialization.StringDeserializer
       from:
         beginning: true
-        groupid: zerodha-tick-group-id
+        groupid: ${TICKGROUPID}
     producer:
       key-serializer: org.apache.kafka.common.serialization.StringSerializer
       value-serializer: org.apache.kafka.common.serialization.StringSerializer
-      topic: zerodha-tickdataservice-publish
-      zerodha-timeseries-publish-topic: notify-algo-seriesupdate-topic
+      topic: ${TICKDATAPUBLISH}
+      zerodha-timeseries-publish-topic: ${TIMESERIESPUBLISHTOPIC}
       
-  profiles: dev
+  profiles: kubernetes
   
   data:
     mongodb:
-      host: localhost
+      host: ${MONGODBHOST}
       port: 27017
-      database: hc4
+      database: ${MONGODBDATABASE}
       
 server:
   address: 0.0.0.0
@@ -40,6 +40,6 @@ server:
 
 tick:
   file:
-    Serializer: /Users/lalitsingh/data/TestData
+    Serializer:  ${TICKFILEPATH}
   barsize: 60
   maxserializetick: 1024
