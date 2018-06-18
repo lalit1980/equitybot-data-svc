@@ -105,7 +105,7 @@ public class TickReceiverListener {
 		customCalendar.add(Calendar.SECOND, 1);
 		tick.setTickTimestamp(customCalendar.getTime());
 		 customTickBarList.addTick(tick);
-		// repository.saveTickData(tick);
+		repository.saveTickData(tick);
 		
 	}
 	
