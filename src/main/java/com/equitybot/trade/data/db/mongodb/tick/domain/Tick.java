@@ -33,7 +33,7 @@ public class Tick {
     private double oi;
     private double oiDayHigh;
     private double oiDayLow;
-    
+    private boolean backTestFlag;
     private Date tickTimestamp;
 
    	public String getMode() {
@@ -196,6 +196,15 @@ public class Tick {
 		this.id = id;
 	}
 
+
+	public boolean isBackTestFlag() {
+		return backTestFlag;
+	}
+
+	public void setBackTestFlag(boolean backTestFlag) {
+		this.backTestFlag = backTestFlag;
+	}
+
 	@Override
 	public String toString() {
 		return "Tick [id=" + id + ", mode=" + mode + ", tradable=" + tradable + ", instrumentToken=" + instrumentToken
@@ -204,6 +213,7 @@ public class Tick {
 				+ ", lastTradedQuantity=" + lastTradedQuantity + ", averageTradePrice=" + averageTradePrice
 				+ ", volumeTradedToday=" + volumeTradedToday + ", totalBuyQuantity=" + totalBuyQuantity
 				+ ", totalSellQuantity=" + totalSellQuantity + ", lastTradedTime=" + lastTradedTime + ", oi=" + oi
-				+ ", oiDayHigh=" + oiDayHigh + ", oiDayLow=" + oiDayLow + ", tickTimestamp=" + tickTimestamp + "]";
+				+ ", oiDayHigh=" + oiDayHigh + ", oiDayLow=" + oiDayLow + ", backTestFlag=" + backTestFlag
+				+ ", tickTimestamp=" + tickTimestamp + "]";
 	}
 }

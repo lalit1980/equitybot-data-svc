@@ -1,8 +1,11 @@
 package com.equitybot.trade.data.converter;
 
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 import java.time.Duration;
+import java.time.Instant;
+import java.time.ZoneId;
 import java.time.ZonedDateTime;
 
 import org.apache.ignite.Ignite;
@@ -46,15 +49,16 @@ public class CustomTickBarList {
 	@Autowired
 	private KafkaTemplate<String, String> kafkaTemplate;
 
-	IgniteCache< String, TimeSeries> cache;
+	IgniteCache<String, TimeSeries> cache;
+
 	public CustomTickBarList() {
 		this.workingTickBarMap = new HashMap<>();
 		this.timeSeriesMap = new HashMap<>();
-		IgniteConfiguration cfg=new IgniteConfiguration();
-		Ignite ignite=Ignition.start(cfg);
+		IgniteConfiguration cfg = new IgniteConfiguration();
+		Ignite ignite = Ignition.start(cfg);
 		Ignition.setClientMode(true);
-		CacheConfiguration<String, TimeSeries> ccfg=new CacheConfiguration<String, TimeSeries>("TimeSeriesCache");
-		this.cache=ignite.getOrCreateCache(ccfg);
+		CacheConfiguration<String, TimeSeries> ccfg = new CacheConfiguration<String, TimeSeries>("TimeSeriesCache");
+		this.cache = ignite.getOrCreateCache(ccfg);
 	}
 
 	public synchronized void addTick(Tick tick) {
@@ -77,27 +81,18 @@ public class CustomTickBarList {
 
 	private void addInSeries(CustomTickBar customTickBar) {
 		Duration barDuration = Duration.ofSeconds(60);
-		
-		Bar bar=new BaseBar(barDuration, 
-							customTickBar.getEndTime(),  
-							Decimal.valueOf(customTickBar.getOpenPrice()), 
-							Decimal.valueOf(customTickBar.getHighPrice()), 
-							Decimal.valueOf(customTickBar.getLowPrice()), 
-							Decimal.valueOf(customTickBar.getClosePrice()), 
-							Decimal.valueOf(customTickBar.getVolume()),
-							Decimal.valueOf(customTickBar.getVolume()));
+
+		Bar bar = new BaseBar(barDuration, customTickBar.getEndTime(), Decimal.valueOf(customTickBar.getOpenPrice()),
+				Decimal.valueOf(customTickBar.getHighPrice()), Decimal.valueOf(customTickBar.getLowPrice()),
+				Decimal.valueOf(customTickBar.getClosePrice()), Decimal.valueOf(customTickBar.getVolume()),
+				Decimal.valueOf(customTickBar.getVolume()));
 		bar.addTrade(customTickBar.getVolume(), customTickBar.getClosePrice());
-		logger.info("Instrument Token: "+customTickBar.getInstrumentToken()+
-				" Open Price: "+bar.getOpenPrice()+
-				" Close Price: "+bar.getClosePrice()+
-				" High Price: "+bar.getMaxPrice()+
-				" Low Price: "+bar.getMinPrice()+
-				" Volume: "+bar.getVolume()+
-				" Trade Count: " +bar.getTrades()+
-				" Amount: "+bar.getAmount()+
-				" Bar begin time: "+bar.getBeginTime()+
-				" Bar TimePeriod duration: "+bar.getTimePeriod());
-		
+		logger.info("Instrument Token: " + customTickBar.getInstrumentToken() + " Open Price: " + bar.getOpenPrice()
+				+ " Close Price: " + bar.getClosePrice() + " High Price: " + bar.getMaxPrice() + " Low Price: "
+				+ bar.getMinPrice() + " Volume: " + bar.getVolume() + " Trade Count: " + bar.getTrades() + " Amount: "
+				+ bar.getAmount() + " Bar begin time: " + bar.getBeginTime() + " Bar TimePeriod duration: "
+				+ bar.getTimePeriod());
+
 		logger.info(bar.toString());
 		TimeSeries timeSeries = this.timeSeriesMap.get(customTickBar.getInstrumentToken());
 		if (timeSeries == null) {
@@ -106,11 +101,12 @@ public class CustomTickBarList {
 		}
 		timeSeries.addBar(bar);
 		cache.put(timeSeries.getName(), timeSeries);
-		ListenableFuture<SendResult<String, String>> future = kafkaTemplate.send(timeSeriesProducerTopic,timeSeries.getName());
+		ListenableFuture<SendResult<String, String>> future = kafkaTemplate.send(timeSeriesProducerTopic,
+				timeSeries.getName());
 		future.addCallback(new ListenableFutureCallback<SendResult<String, String>>() {
 			@Override
 			public void onSuccess(SendResult<String, String> result) {
-				//logger.info("Sent message: " + result);
+				// logger.info("Sent message: " + result);
 			}
 
 			@Override
@@ -118,7 +114,7 @@ public class CustomTickBarList {
 				logger.info("Failed to send message");
 			}
 		});
-		//kafkaTemplate.send(timeSeriesProducerTopic, timeSeries.getName());
+		// kafkaTemplate.send(timeSeriesProducerTopic, timeSeries.getName());
 		logger.info(TickConstant.LOG_ADD_IN_SERIES_INFO, customTickBar.getEndTime());
 	}
 
@@ -128,5 +124,49 @@ public class CustomTickBarList {
 
 	public IgniteCache<String, TimeSeries> getCache() {
 		return cache;
+	}
+
+	public void backTest(Tick tick) {
+		Duration barDuration = Duration.ofSeconds(300);
+		ZoneId istZone = ZoneId.of("Asia/Kolkata");
+		if (tick.isBackTestFlag()) {
+			ZonedDateTime barEndTime = ZonedDateTime.ofInstant(tick.getTickTimestamp().toInstant(), istZone);
+			
+			Bar bar = new BaseBar(barDuration, barEndTime, Decimal.valueOf(tick.getOpenPrice()),
+					Decimal.valueOf(tick.getHighPrice()), Decimal.valueOf(tick.getLowPrice()),
+					Decimal.valueOf(tick.getClosePrice()), Decimal.valueOf(tick.getLastTradedQuantity()),
+					Decimal.valueOf(tick.getLastTradedQuantity()));
+			bar.addTrade(tick.getLastTradedQuantity(), tick.getLastTradedPrice());
+			logger.info(bar.toString());
+			TimeSeries timeSeries = this.timeSeriesMap.get(tick.getInstrumentToken());
+			if (timeSeries == null) {
+				logger.info("*************Series is null*******************");
+				timeSeries = new BaseTimeSeries(String.valueOf(tick.getInstrumentToken()));
+				this.timeSeriesMap.put(tick.getInstrumentToken(), timeSeries);
+			}
+			try {
+			timeSeries.addBar(bar);
+			}catch(IllegalArgumentException argumentException) {
+				logger.error(" --  new -:"+bar);
+				logger.error(" --  old -:"+timeSeries.getBarData().get(timeSeries.getBarData().size()-1));
+				throw argumentException;
+				
+			}
+			cache.put(timeSeries.getName(), timeSeries);
+			ListenableFuture<SendResult<String, String>> future = kafkaTemplate.send(timeSeriesProducerTopic,
+					timeSeries.getName());
+			future.addCallback(new ListenableFutureCallback<SendResult<String, String>>() {
+				@Override
+				public void onSuccess(SendResult<String, String> result) {
+					// logger.info("Sent message: " + result);
+				}
+
+				@Override
+				public void onFailure(Throwable ex) {
+					logger.info("Failed to send message");
+				}
+			});
+		}
+
 	}
 }
