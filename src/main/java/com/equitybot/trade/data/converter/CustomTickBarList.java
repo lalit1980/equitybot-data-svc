@@ -127,7 +127,7 @@ public class CustomTickBarList {
 	}
 
 	public void backTest(Tick tick) {
-		Duration barDuration = Duration.ofSeconds(300);
+		Duration barDuration = Duration.ofSeconds(60);
 		ZoneId istZone = ZoneId.of("Asia/Kolkata");
 		if (tick.isBackTestFlag()) {
 			ZonedDateTime barEndTime = ZonedDateTime.ofInstant(tick.getTickTimestamp().toInstant(), istZone);
@@ -158,7 +158,7 @@ public class CustomTickBarList {
 			future.addCallback(new ListenableFutureCallback<SendResult<String, String>>() {
 				@Override
 				public void onSuccess(SendResult<String, String> result) {
-					// logger.info("Sent message: " + result);
+					logger.info("Sent message: " + result);
 				}
 
 				@Override

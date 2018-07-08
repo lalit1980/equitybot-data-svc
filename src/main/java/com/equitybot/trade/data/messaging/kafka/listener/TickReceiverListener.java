@@ -65,7 +65,7 @@ public class TickReceiverListener {
 	private void processRequest(Tick tick) throws IOException {
 		if(tick.isBackTestFlag()) {
 			customTickBarList.backTest(tick);
-			repository.saveTickData(tick);
+			//repository.saveTickData(tick);
 		}else {
 			 customTickBarList.addTick(tick);
 			 repository.saveTickData(tick);
