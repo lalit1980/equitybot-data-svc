@@ -8,6 +8,7 @@ com/equitybot/trade/data/util/DateFormatUtil.class
 com/equitybot/trade/data/db/mongodb/tick/repository/TickRepositoryImpl.class
 com/equitybot/trade/data/messaging/kafka/config/producer/KafkaProducerConfig.class
 com/equitybot/trade/data/util/TickConstant.class
+com/equitybot/trade/data/converter/CustomTickBarList$2.class
 com/equitybot/trade/data/db/mongodb/tick/domain/Tick.class
 com/equitybot/trade/data/messaging/kafka/listener/TickReceiverListener.class
 com/equitybot/trade/data/messaging/kafka/config/consumer/KafkaConsumerTickerConfig.class
