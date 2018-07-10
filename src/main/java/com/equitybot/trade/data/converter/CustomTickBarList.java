@@ -55,6 +55,7 @@ public class CustomTickBarList {
 	private KafkaTemplate<String, String> kafkaTemplate;
 
 	IgniteCache<String, TimeSeries> cache;
+	private IgniteCache<Long, Double> cacheLastTradedPrice;
 
 	public CustomTickBarList() {
 		this.workingTickBarMap = new HashMap<>();
@@ -75,8 +76,10 @@ public class CustomTickBarList {
 		ccfg.setCacheMode(CacheMode.PARTITIONED);
 		ccfg.setRebalanceMode(CacheRebalanceMode.NONE);
 		ccfg.setDataRegionName("1GB_Region");
-		ccfg = new CacheConfiguration<String, TimeSeries>("TimeSeriesCache");
 		this.cache = ignite.getOrCreateCache(ccfg);
+		
+		CacheConfiguration<Long, Double> ccfgLastTradedPrice = new CacheConfiguration<Long, Double>("LastTradedPrice");
+		this.cacheLastTradedPrice = ignite.getOrCreateCache(ccfgLastTradedPrice);
 	}
 
 	public synchronized void addTick(Tick tick) {
@@ -186,5 +189,13 @@ public class CustomTickBarList {
 			});
 		}
 
+	}
+
+	public IgniteCache<Long, Double> getCacheLastTradedPrice() {
+		return cacheLastTradedPrice;
+	}
+
+	public void setCacheLastTradedPrice(IgniteCache<Long, Double> cacheLastTradedPrice) {
+		this.cacheLastTradedPrice = cacheLastTradedPrice;
 	}
 }
