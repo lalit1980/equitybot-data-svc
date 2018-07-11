@@ -3,6 +3,7 @@ package com.equitybot.trade.data.converter;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.time.Duration;
 import java.time.Instant;
 import java.time.ZoneId;
@@ -61,24 +62,11 @@ public class CustomTickBarList {
 		this.workingTickBarMap = new HashMap<>();
 		this.timeSeriesMap = new HashMap<>();
 		IgniteConfiguration cfg = new IgniteConfiguration();
-		TcpDiscoverySpi tcpDiscoverySpi= new TcpDiscoverySpi();
-		TcpDiscoveryKubernetesIpFinder ipFinder  = new TcpDiscoveryKubernetesIpFinder();
-		ipFinder.setServiceName("ignite");
-		tcpDiscoverySpi.setIpFinder(ipFinder);
-		cfg.setDiscoverySpi(tcpDiscoverySpi);
-		cfg.setPeerClassLoadingEnabled(true);
-		cfg.setClientMode(true);
 		Ignite ignite = Ignition.start(cfg);
 		Ignition.setClientMode(true);
-		ignite.active(true);
 		CacheConfiguration<String, TimeSeries> ccfg = new CacheConfiguration<String, TimeSeries>("TimeSeriesCache");
-		ccfg.setAtomicityMode(CacheAtomicityMode.ATOMIC);
-		ccfg.setCacheMode(CacheMode.PARTITIONED);
-		ccfg.setRebalanceMode(CacheRebalanceMode.NONE);
-		ccfg.setDataRegionName("1GB_Region");
-		this.cache = ignite.getOrCreateCache(ccfg);
-		
 		CacheConfiguration<Long, Double> ccfgLastTradedPrice = new CacheConfiguration<Long, Double>("LastTradedPrice");
+		this.cache = ignite.getOrCreateCache(ccfg);
 		this.cacheLastTradedPrice = ignite.getOrCreateCache(ccfgLastTradedPrice);
 	}
 
@@ -122,6 +110,11 @@ public class CustomTickBarList {
 		}
 		timeSeries.addBar(bar);
 		cache.put(timeSeries.getName(), timeSeries);
+		if (cacheLastTradedPrice!=null) {
+			logger.info("*******Last Traded Price Cache: "+cacheLastTradedPrice.get(Long.parseLong(timeSeries.getName())));
+		}else {
+			logger.info("%%%%%%%%%%%%%%% gand fatttttttt gayi last traded price is empty %%%%%%%%%%%");
+		}
 		ListenableFuture<SendResult<String, String>> future = kafkaTemplate.send(timeSeriesProducerTopic,
 				timeSeries.getName());
 		future.addCallback(new ListenableFutureCallback<SendResult<String, String>>() {
