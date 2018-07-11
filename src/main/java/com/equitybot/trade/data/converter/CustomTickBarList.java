@@ -1,24 +1,16 @@
 package com.equitybot.trade.data.converter;
 
-import java.util.Date;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Map.Entry;
 import java.time.Duration;
-import java.time.Instant;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
+import java.util.HashMap;
+import java.util.Map;
 
 import org.apache.ignite.Ignite;
 import org.apache.ignite.IgniteCache;
 import org.apache.ignite.Ignition;
-import org.apache.ignite.cache.CacheAtomicityMode;
-import org.apache.ignite.cache.CacheMode;
-import org.apache.ignite.cache.CacheRebalanceMode;
 import org.apache.ignite.configuration.CacheConfiguration;
 import org.apache.ignite.configuration.IgniteConfiguration;
-import org.apache.ignite.spi.discovery.tcp.TcpDiscoverySpi;
-import org.apache.ignite.spi.discovery.tcp.ipfinder.kubernetes.TcpDiscoveryKubernetesIpFinder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -37,7 +29,6 @@ import org.ta4j.core.Decimal;
 import org.ta4j.core.TimeSeries;
 
 import com.equitybot.trade.data.db.mongodb.tick.domain.Tick;
-import com.equitybot.trade.data.util.TickConstant;
 
 @Service
 @Scope(value = ConfigurableBeanFactory.SCOPE_SINGLETON)
@@ -96,12 +87,6 @@ public class CustomTickBarList {
 				Decimal.valueOf(customTickBar.getClosePrice()), Decimal.valueOf(customTickBar.getVolume()),
 				Decimal.valueOf(customTickBar.getVolume()));
 		bar.addTrade(customTickBar.getVolume(), customTickBar.getClosePrice());
-		logger.info("Instrument Token: " + customTickBar.getInstrumentToken() + " Open Price: " + bar.getOpenPrice()
-				+ " Close Price: " + bar.getClosePrice() + " High Price: " + bar.getMaxPrice() + " Low Price: "
-				+ bar.getMinPrice() + " Volume: " + bar.getVolume() + " Trade Count: " + bar.getTrades() + " Amount: "
-				+ bar.getAmount() + " Bar begin time: " + bar.getBeginTime() + " Bar TimePeriod duration: "
-				+ bar.getTimePeriod());
-
 		logger.info(bar.toString());
 		TimeSeries timeSeries = this.timeSeriesMap.get(customTickBar.getInstrumentToken());
 		if (timeSeries == null) {
@@ -110,17 +95,11 @@ public class CustomTickBarList {
 		}
 		timeSeries.addBar(bar);
 		cache.put(timeSeries.getName(), timeSeries);
-		if (cacheLastTradedPrice!=null) {
-			logger.info("*******Last Traded Price Cache: "+cacheLastTradedPrice.get(Long.parseLong(timeSeries.getName())));
-		}else {
-			logger.info("%%%%%%%%%%%%%%% gand fatttttttt gayi last traded price is empty %%%%%%%%%%%");
-		}
-		ListenableFuture<SendResult<String, String>> future = kafkaTemplate.send(timeSeriesProducerTopic,
-				timeSeries.getName());
+		ListenableFuture<SendResult<String, String>> future = kafkaTemplate.send(timeSeriesProducerTopic,timeSeries.getName());
 		future.addCallback(new ListenableFutureCallback<SendResult<String, String>>() {
 			@Override
 			public void onSuccess(SendResult<String, String> result) {
-				// logger.info("Sent message: " + result);
+				logger.info("Sent message: " + result);
 			}
 
 			@Override
@@ -128,8 +107,6 @@ public class CustomTickBarList {
 				logger.info("Failed to send message");
 			}
 		});
-		// kafkaTemplate.send(timeSeriesProducerTopic, timeSeries.getName());
-		logger.info(TickConstant.LOG_ADD_IN_SERIES_INFO, customTickBar.getEndTime());
 	}
 
 	public TimeSeries getSeries(Long instrumentToken) {

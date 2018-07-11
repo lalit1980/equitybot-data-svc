@@ -9,7 +9,6 @@ import com.google.gson.annotations.SerializedName;
 public class Depth {
 	
 	@Id
-	//@Indexed(unique = true)
 	private String id;
 	@SerializedName("quantity")
     private int quantity;

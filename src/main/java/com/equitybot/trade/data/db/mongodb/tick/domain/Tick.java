@@ -3,7 +3,9 @@ package com.equitybot.trade.data.db.mongodb.tick.domain;
 
 	
 
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.Map;
 
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.index.Indexed;
@@ -12,7 +14,6 @@ import org.springframework.data.mongodb.core.mapping.Document;
 public class Tick {
 
 	@Id
-	//@Indexed(unique = true)
 	private String id;
     private String mode;
     private boolean tradable;
@@ -35,6 +36,7 @@ public class Tick {
     private double oiDayLow;
     private boolean backTestFlag;
     private Date tickTimestamp;
+    private Map<String, ArrayList<com.equitybot.trade.data.db.mongodb.tick.domain.Depth>> depth;
 
    	public String getMode() {
 		return mode;
@@ -205,6 +207,15 @@ public class Tick {
 		this.backTestFlag = backTestFlag;
 	}
 
+
+	public Map<String, ArrayList<com.equitybot.trade.data.db.mongodb.tick.domain.Depth>> getDepth() {
+		return depth;
+	}
+
+	public void setDepth(Map<String, ArrayList<com.equitybot.trade.data.db.mongodb.tick.domain.Depth>> depth) {
+		this.depth = depth;
+	}
+
 	@Override
 	public String toString() {
 		return "Tick [id=" + id + ", mode=" + mode + ", tradable=" + tradable + ", instrumentToken=" + instrumentToken
@@ -214,6 +225,6 @@ public class Tick {
 				+ ", volumeTradedToday=" + volumeTradedToday + ", totalBuyQuantity=" + totalBuyQuantity
 				+ ", totalSellQuantity=" + totalSellQuantity + ", lastTradedTime=" + lastTradedTime + ", oi=" + oi
 				+ ", oiDayHigh=" + oiDayHigh + ", oiDayLow=" + oiDayLow + ", backTestFlag=" + backTestFlag
-				+ ", tickTimestamp=" + tickTimestamp + "]";
+				+ ", tickTimestamp=" + tickTimestamp + ", depth=" + depth + "]";
 	}
 }

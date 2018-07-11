@@ -43,3 +43,4 @@ tick:
     Serializer: /Users/lalitsingh/data/TestData
   barsize: 60
   maxserializetick: 1024
+  backTestFlag: true
