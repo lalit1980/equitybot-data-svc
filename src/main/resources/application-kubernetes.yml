@@ -12,19 +12,19 @@ spring:
   kafka:
     bootstrap-servers: ${KAFKASERVERS}
     consumer:
-      zerodha-order-consume-topic: ${ORDERTICKDATAPUBLISH}
-      groupid: ${TICKGROUPID}
+      topic-kite-tick: ${ORDERTICKDATAPUBLISH}
+      ggroup-id-tick: ${TICKGROUPID}
       auto-offset-reset: earliest
       key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
       value-deserializer: org.apache.kafka.common.serialization.StringDeserializer
       from:
         beginning: true
-        groupid: ${TICKGROUPID}
+        ggroup-id-tick: ${TICKGROUPID}
     producer:
       key-serializer: org.apache.kafka.common.serialization.StringSerializer
       value-serializer: org.apache.kafka.common.serialization.StringSerializer
-      topic: ${TICKDATAPUBLISH}
-      zerodha-timeseries-publish-topic: ${TIMESERIESPUBLISHTOPIC}
+      topic-kite-tick: ${TICKDATAPUBLISH}
+      topic-data-seriesupdate: ${TIMESERIESPUBLISHTOPIC}
       
   profiles: kubernetes
   

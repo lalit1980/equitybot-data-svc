@@ -23,7 +23,7 @@ public class KafkaConsumerTickerConfig {
 	 	@Value("${spring.kafka.bootstrap-servers}")
 	    private String bootstrapServers;
 	 	
-	 	@Value("${spring.kafka.consumer.groupid}")
+	 	@Value("${spring.kafka.consumer.group-id-tick}")
 	    private String groupId;
 	 	
 	 	@Bean

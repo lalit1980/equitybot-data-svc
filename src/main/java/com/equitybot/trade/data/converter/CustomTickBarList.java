@@ -41,7 +41,7 @@ public class CustomTickBarList {
 	@Value("${tick.barsize}")
 	private long eachBarSize;
 
-	@Value("${spring.kafka.producer.zerodha-timeseries-publish-topic}")
+	@Value("${spring.kafka.producer.topic-data-seriesupdate}")
 	private String timeSeriesProducerTopic;
 	@Autowired
 	private KafkaTemplate<String, String> kafkaTemplate;

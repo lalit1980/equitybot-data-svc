@@ -30,7 +30,7 @@ public class TickReceiverListener {
 	@Value("${spring.kafka.bootstrap-servers}")
 	private String bootstrapServers;
 
-	@Value("${spring.kafka.producer.zerodha-timeseries-publish-topic}")
+	@Value("${spring.kafka.producer.topic-data-seriesupdate}")
 	private String timeSeriesProducerTopic;
 
 	@Autowired
@@ -46,7 +46,7 @@ public class TickReceiverListener {
 	private boolean backTestFlag;
 
 	@KafkaListener(id = "id0", topicPartitions = {
-			@TopicPartition(topic = "zerodha-tickdataservice-publish", partitions = { "0" }) })
+			@TopicPartition(topic = "topic-kite-tick", partitions = { "0" }) })
 	public void listenPartition0(ConsumerRecord<?, ?> record) throws IOException {
 		Gson gson = new Gson();
 		com.zerodhatech.models.Tick tickList = gson.fromJson(record.value().toString(), com.zerodhatech.models.Tick.class);
@@ -54,7 +54,7 @@ public class TickReceiverListener {
 	}
 
 	@KafkaListener(id = "id1", topicPartitions = {
-			@TopicPartition(topic = "zerodha-tickdataservice-publish", partitions = { "1" }) })
+			@TopicPartition(topic = "topic-kite-tick", partitions = { "1" }) })
 	public void listenPartition1(ConsumerRecord<?, ?> record) throws IOException {
 		Gson gson = new Gson();
 		com.zerodhatech.models.Tick tickList = gson.fromJson(record.value().toString(), com.zerodhatech.models.Tick.class);
@@ -62,7 +62,7 @@ public class TickReceiverListener {
 	}
 
 	@KafkaListener(id = "id2", topicPartitions = {
-			@TopicPartition(topic = "zerodha-tickdataservice-publish", partitions = { "2" }) })
+			@TopicPartition(topic = "topic-kite-tick", partitions = { "2" }) })
 	public void listenPartition2(ConsumerRecord<?, ?> record) throws IOException {
 		Gson gson = new Gson();
 		com.zerodhatech.models.Tick tickList = gson.fromJson(record.value().toString(), com.zerodhatech.models.Tick.class);
