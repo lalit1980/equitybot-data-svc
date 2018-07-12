@@ -1,0 +1,14 @@
+
+*.class
+*.prefs
+.settings/org.eclipse.wst.common.component
+.settings/org.eclipse.wst.common.project.facet.core.xml
+target/classes/application-dev.yml
+target/classes/application-kubernetes.yml
+target/classes/application.yml
+target/classes/logback.xml
+target/classes/META-INF/MANIFEST.MF
+target/classes/META-INF/maven/com.equitybot.trade.data/equitybot-data-svc/pom.properties
+target/classes/META-INF/maven/com.equitybot.trade.data/equitybot-data-svc/pom.xml
+.project
+.classpath
