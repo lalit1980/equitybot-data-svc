@@ -45,7 +45,7 @@ public class TickReceiverListener {
 	@Value("${tick.backTestFlag}")
 	private boolean backTestFlag;
 
-	@KafkaListener(id = "id0", topicPartitions = {
+	@KafkaListener(topicPartitions = {
 			@TopicPartition(topic = "topic-kite-tick", partitions = { "0" }) })
 	public void listenPartition0(ConsumerRecord<?, ?> record) throws IOException {
 		Gson gson = new Gson();
@@ -53,7 +53,7 @@ public class TickReceiverListener {
 		processRequest(tickList);
 	}
 
-	@KafkaListener(id = "id1", topicPartitions = {
+	@KafkaListener(topicPartitions = {
 			@TopicPartition(topic = "topic-kite-tick", partitions = { "1" }) })
 	public void listenPartition1(ConsumerRecord<?, ?> record) throws IOException {
 		Gson gson = new Gson();
@@ -61,7 +61,7 @@ public class TickReceiverListener {
 		processRequest(tickList);
 	}
 
-	@KafkaListener(id = "id2", topicPartitions = {
+	@KafkaListener( topicPartitions = {
 			@TopicPartition(topic = "topic-kite-tick", partitions = { "2" }) })
 	public void listenPartition2(ConsumerRecord<?, ?> record) throws IOException {
 		Gson gson = new Gson();
@@ -72,7 +72,6 @@ public class TickReceiverListener {
 	private void processRequest(com.zerodhatech.models.Tick tick) throws IOException {
 		if(backTestFlag) {
 			Tick tickz=convertTickModel(tick);
-			logger.info("Received: "+tickz.toString());
 			customTickBarList.backTest(tickz);
 			repository.saveTickData(tickz);
 		}else {

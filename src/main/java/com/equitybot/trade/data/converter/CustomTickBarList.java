@@ -120,7 +120,7 @@ public class CustomTickBarList {
 	public void backTest(Tick tick) {
 		Duration barDuration = Duration.ofSeconds(60);
 		ZoneId istZone = ZoneId.of("Asia/Kolkata");
-		if (tick.isBackTestFlag()) {
+		if (true) {
 			ZonedDateTime barEndTime = ZonedDateTime.ofInstant(tick.getTickTimestamp().toInstant(), istZone);
 			
 			Bar bar = new BaseBar(barDuration, barEndTime, Decimal.valueOf(tick.getOpenPrice()),
@@ -128,18 +128,14 @@ public class CustomTickBarList {
 					Decimal.valueOf(tick.getClosePrice()), Decimal.valueOf(tick.getLastTradedQuantity()),
 					Decimal.valueOf(tick.getLastTradedQuantity()));
 			bar.addTrade(tick.getLastTradedQuantity(), tick.getLastTradedPrice());
-			logger.info(bar.toString());
 			TimeSeries timeSeries = this.timeSeriesMap.get(tick.getInstrumentToken());
 			if (timeSeries == null) {
-				logger.info("*************Series is null*******************");
 				timeSeries = new BaseTimeSeries(String.valueOf(tick.getInstrumentToken()));
 				this.timeSeriesMap.put(tick.getInstrumentToken(), timeSeries);
 			}
 			try {
 			timeSeries.addBar(bar);
 			}catch(IllegalArgumentException argumentException) {
-				logger.error(" --  new -:"+bar);
-				logger.error(" --  old -:"+timeSeries.getBarData().get(timeSeries.getBarData().size()-1));
 				throw argumentException;
 				
 			}
