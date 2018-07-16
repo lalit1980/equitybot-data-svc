@@ -13,13 +13,11 @@ spring:
     bootstrap-servers: localhost:9092,localhost:9093,localhost:9094
     consumer:
       topic-kite-tick: topic-kite-tick
-      group-id-tick: group-id-tick-09
       auto-offset-reset: earliest
       key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
       value-deserializer: org.apache.kafka.common.serialization.StringDeserializer
       from:
         beginning: true
-        group-id-tick: group-id-tick-010
     producer:
       key-serializer: org.apache.kafka.common.serialization.StringSerializer
       value-serializer: org.apache.kafka.common.serialization.StringSerializer
@@ -43,4 +41,4 @@ tick:
     Serializer: /Users/lalitsingh/data/TestData
   barsize: 60
   maxserializetick: 1024
-  backTestFlag: true
+  backTestFlag: false

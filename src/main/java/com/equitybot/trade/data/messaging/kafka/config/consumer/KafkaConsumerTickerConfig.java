@@ -2,6 +2,7 @@ package com.equitybot.trade.data.messaging.kafka.config.consumer;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.UUID;
 
 import org.apache.kafka.clients.consumer.ConsumerConfig;
 import org.apache.kafka.common.serialization.StringDeserializer;
@@ -22,9 +23,7 @@ import com.equitybot.trade.data.messaging.kafka.listener.TickReceiverListener;
 public class KafkaConsumerTickerConfig {
 	 	@Value("${spring.kafka.bootstrap-servers}")
 	    private String bootstrapServers;
-	 	
-	 	@Value("${spring.kafka.consumer.group-id-tick}")
-	    private String groupId;
+	 
 	 	
 	 	@Bean
 		KafkaListenerContainerFactory<ConcurrentMessageListenerContainer<String, String>> kafkaListenerContainerFactory() {
@@ -49,7 +48,7 @@ public class KafkaConsumerTickerConfig {
 			propsMap.put(ConsumerConfig.SESSION_TIMEOUT_MS_CONFIG, "15000");
 			propsMap.put(ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG, StringDeserializer.class);
 			propsMap.put(ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG, StringDeserializer.class);
-			propsMap.put(ConsumerConfig.GROUP_ID_CONFIG, " group-id-tick-07");
+			propsMap.put(ConsumerConfig.GROUP_ID_CONFIG, UUID.randomUUID().toString());
 			propsMap.put(ConsumerConfig.AUTO_OFFSET_RESET_CONFIG, "earliest");
 			return propsMap;
 		}

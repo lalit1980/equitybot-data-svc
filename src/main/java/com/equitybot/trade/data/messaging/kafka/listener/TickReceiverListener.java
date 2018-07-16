@@ -2,7 +2,6 @@ package com.equitybot.trade.data.messaging.kafka.listener;
 
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -53,22 +52,7 @@ public class TickReceiverListener {
 		processRequest(tickList);
 	}
 
-	@KafkaListener(topicPartitions = {
-			@TopicPartition(topic = "topic-kite-tick", partitions = { "1" }) })
-	public void listenPartition1(ConsumerRecord<?, ?> record) throws IOException {
-		Gson gson = new Gson();
-		com.zerodhatech.models.Tick tickList = gson.fromJson(record.value().toString(), com.zerodhatech.models.Tick.class);
-		processRequest(tickList);
-	}
-
-	@KafkaListener( topicPartitions = {
-			@TopicPartition(topic = "topic-kite-tick", partitions = { "2" }) })
-	public void listenPartition2(ConsumerRecord<?, ?> record) throws IOException {
-		Gson gson = new Gson();
-		com.zerodhatech.models.Tick tickList = gson.fromJson(record.value().toString(), com.zerodhatech.models.Tick.class);
-		processRequest(tickList);
-	}
-
+	
 	private void processRequest(com.zerodhatech.models.Tick tick) throws IOException {
 		if(backTestFlag) {
 			Tick tickz=convertTickModel(tick);

@@ -12,3 +12,4 @@ target/classes/META-INF/maven/com.equitybot.trade.data/equitybot-data-svc/pom.pr
 target/classes/META-INF/maven/com.equitybot.trade.data/equitybot-data-svc/pom.xml
 .project
 .classpath
+/target/
